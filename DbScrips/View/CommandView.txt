@@ -1,0 +1,47 @@
+CREATE VIEW [dbo].[SalesSummaryView] AS
+SELECT 
+    FORMAT(O.requestDate, 'yyyy-MM') AS salesMonth,
+    COUNT(O.id) AS totalOrders,
+    SUM(I.price * OI.quantity) AS totalRevenue
+FROM 
+    [dbo].[ItemRequest] O
+JOIN 
+    [dbo].[OrderItem] OI ON O.id = OI.orderId
+JOIN 
+    [dbo].[Item] I ON OI.itemId = I.id
+WHERE 
+    O.status = 'approved'  -- Or 'completed' depending on your system
+GROUP BY 
+    FORMAT(O.requestDate, 'yyyy-MM');
+
+************************************************************
+CREATE VIEW [dbo].[ActiveItemsView] AS
+SELECT 
+    I.id,
+    I.name AS itemName,
+    C.name AS categoryName,
+    B.name AS brandName,
+    I.price,
+    I.discountAmount,
+    I.hasDiscount
+FROM 
+    [dbo].[Item] I
+JOIN 
+    [dbo].[Category] C ON I.categoryId = C.id
+JOIN 
+    [dbo].[Brand] B ON I.brandId = B.id
+WHERE 
+    I.isActive = 1;
+
+************************************************************
+CREATE OR ALTER VIEW [dbo].[SalesSummaryView] AS
+SELECT 
+    FORMAT(O.orderDate, 'yyyy-MM') AS salesMonth,
+    COUNT(O.id) AS totalOrders,
+    SUM(O.totalAmount) AS totalRevenue
+FROM 
+    [dbo].[Orders] O
+WHERE 
+    O.totalAmount IS NOT NULL
+GROUP BY 
+    FORMAT(O.orderDate, 'yyyy-MM');

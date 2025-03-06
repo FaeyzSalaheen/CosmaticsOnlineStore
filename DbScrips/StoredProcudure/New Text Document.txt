@@ -1,0 +1,114 @@
+
+1. Add Item to Order:
+Write a stored procedure to add a selected item to a customer's order, 
+ensuring stock availability is checked before adding.
+CREATE PROCEDURE AddItemToOrder
+    @orderId INT,
+    @itemId INT,
+    @quantity INT
+AS
+BEGIN
+    DECLARE @itemQuantity INT;
+    DECLARE @itemPrice DECIMAL(10, 2);
+    
+   
+    SELECT @itemQuantity = quantity, @itemPrice = price
+    FROM dbo.Item
+    WHERE id = @itemId AND isActive = 1;
+    
+    
+    IF @itemQuantity IS NULL OR @itemQuantity < @quantity
+    BEGIN
+        RAISERROR('Item not found or insufficient stock', 16, 1);
+        RETURN;
+    END
+    
+    
+    INSERT INTO dbo.OrderItem (orderId, itemId, quantity, price)
+    VALUES (@orderId, @itemId, @quantity, @itemPrice);
+    
+    
+    UPDATE dbo.Item
+    SET quantity = quantity - @quantity
+    WHERE id = @itemId;
+    
+    PRINT 'Item added to order successfully';
+END;
+
+***************************************************
+2. Manage Discounts:
+CREATE PROCEDURE ManageDiscounts
+    @itemId INT = NULL,
+    @categoryId INT = NULL,
+    @discountAmount DECIMAL(10, 2) = 0
+AS
+BEGIN
+   
+    IF @itemId IS NOT NULL
+    BEGIN
+        UPDATE dbo.Item
+        SET discountAmount = @discountAmount, hasDiscount = 1
+        WHERE id = @itemId;
+    END
+    
+    ELSE IF @categoryId IS NOT NULL
+    BEGIN
+        UPDATE dbo.Item
+        SET discountAmount = @discountAmount, hasDiscount = 1
+        WHERE categoryId = @categoryId;
+    END
+    PRINT 'Discount applied successfully';
+END;
+
+***************************************************
+3. Generate Sales Report:
+CREATE PROCEDURE GenerateSalesReport
+    @startDate DATETIME,
+    @endDate DATETIME
+AS
+BEGIN
+    SELECT 
+        I.name AS ItemName,
+        SUM(OI.quantity) AS TotalQuantitySold,
+        SUM(OI.quantity * OI.price) AS TotalRevenue
+    FROM dbo.OrderItem OI
+    JOIN dbo.Item I ON OI.itemId = I.id
+    JOIN dbo.Orders O ON OI.orderId = O.id
+    WHERE O.orderDate BETWEEN @startDate AND @endDate
+    GROUP BY I.name;
+    
+    
+    SELECT 
+        SUM(OI.quantity * OI.price) AS TotalRevenue
+    FROM dbo.OrderItem OI
+    JOIN dbo.Orders O ON OI.orderId = O.id
+    WHERE O.orderDate BETWEEN @startDate AND @endDate;
+END;
+
+***************************************************
+ 4. Process Item Request:
+
+CREATE PROCEDURE ProcessItemRequest
+    @requestId INT,
+    @status VARCHAR(50) 
+AS
+BEGIN
+    
+    UPDATE dbo.ItemRequest
+    SET status = @status, updateDate = GETDATE()
+    WHERE id = @requestId;
+    
+    IF @status = 'approved'
+    BEGIN
+       
+        PRINT 'Request approved and processed';
+    END
+    ELSE IF @status = 'rejected'
+    BEGIN
+       
+        PRINT 'Request rejected';
+    END
+END;
+
+
+

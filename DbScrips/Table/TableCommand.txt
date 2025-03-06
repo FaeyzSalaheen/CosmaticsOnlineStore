@@ -1,0 +1,94 @@
+CREATE TABLE [dbo].[Category](
+	[id] [int] IDENTITY(1,1) NOT NULL,
+	[name] [varchar](100) NULL,
+	[description] [varchar](max) NOT NULL,
+	[createdBy] [varchar](100) NULL,
+	[updatedBy] [varchar](100) NULL,
+	[creationDate] [datetime] NULL,
+	[updateDate] [datetime] NULL,)
+
+CREATE TABLE [dbo].[Brand](
+	[id] [int] IDENTITY(1,1) NOT NULL,
+	[name] [varchar](100) NOT NULL,
+	[createdBy] [varchar](100) NULL,
+	[updatedBy] [varchar](100) NULL,
+	[creationDate] [datetime] NULL,
+	[updateDate] [datetime] NULL,
+)
+CREATE TABLE [dbo].[Item](
+	[id] [int] IDENTITY(1,1) NOT NULL,
+	[name] [varchar](100) NULL,
+	[description] [varchar](max) NULL,
+	[image] [varchar](max) NULL,
+	[categoryId] [int] NULL,
+	[brandId] [int] NULL,
+	[quantity] [int] NULL,
+	[cost] [decimal](10, 2) NULL,
+	[price] [decimal](10, 2) NULL,
+	[hasDiscount] [bit] NULL,
+	[discountAmount] [decimal](10, 2) NULL,
+	[isActive] [bit] NULL,
+	[createdBy] [nvarchar](100) NULL,
+	[updatedBy] [nvarchar](100) NULL,
+	[creationDate] [datetime] NULL,
+	[updateDate] [datetime] NULL,)
+
+CREATE TABLE [dbo].[OrderItem](
+	[id] [int] IDENTITY(1,1) NOT NULL,
+	[orderId] [int] NULL,
+	[itemId] [int] NULL,
+	[quantity] [int] NULL,
+	[price] [decimal](10, 2) NULL,)
+
+CREATE TABLE [dbo].[ItemRequest](
+	[id] [int] IDENTITY(1,1) NOT NULL,
+	[clientId] [int] NULL,
+	[itemName] [varchar](100) NULL,
+	[description] [varchar](max) NULL,
+	[requestDate] [datetime] NULL,
+	[status] [varchar](50) NULL,)
+
+CREATE TABLE [dbo].[Ingredient](
+	[id] [int] IDENTITY(1,1) NOT NULL,
+	[itemId] [int] NULL,
+	[name] [varchar](100) NULL,
+	[quantity] [varchar](50) NULL,)
+
+
+CREATE TABLE [dbo].[Orders](
+	[id] [int] IDENTITY(1,1) NOT NULL,
+	[clientId] [int] NULL,
+	[orderDate] [datetime] NULL,
+	[totalAmount] [decimal](10, 2) NULL,
+	[createdBy] [varchar](100) NULL,
+	[updatedBy] [varchar](100) NULL,
+	[creationDate] [datetime] NULL,
+	[updateDate] [datetime] NULL,)
+
+CREATE TABLE [dbo].[Rating](
+	[id] [int] IDENTITY(1,1) NOT NULL,
+	[orderItemId] [int] NULL,
+	[clientId] [int] NULL,
+	[ratingValue] [int] NULL,
+	[comment] [nvarchar](max) NULL,
+
+CREATE TABLE [dbo].[Users](
+	[id] [int] IDENTITY(1,1) NOT NULL,
+	[name] [varchar](100) NOT NULL,
+	[email] [varchar](255) NOT NULL,
+	[password] [varchar](255) NOT NULL,
+	[profileImage] [varchar](max) NULL,
+	[phoneNumber] [varchar](20) NULL,
+	[role] [varchar](50) NULL,
+	[createdBy] [varchar](100) NULL,
+	[updatedBy] [varchar](100) NULL,
+	[creationDate] [datetime] NULL,
+	[updateDate] [datetime] NULL,
+
+CREATE TABLE [dbo].[Wishlist](
+	[id] [int] IDENTITY(1,1) NOT NULL,
+	[clientId] [int] NULL,
+	[itemId] [int] NULL,
+	[creationDate] [datetime] NULL,
+	[quantity] [varchar](10) NULL,
+

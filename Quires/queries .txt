@@ -1,0 +1,67 @@
+1. Retrieve Items by Category
+SELECT 
+    i.name AS ItemName, 
+    i.price, 
+    i.hasDiscount, 
+    i.discountAmount
+FROM 
+    Item i
+JOIN 
+    Category c ON i.categoryId = c.id
+WHERE 
+    c.name = 'makeup'
+    AND i.isActive = 1;  
+******************************************************
+2. Search Items:
+
+
+SELECT 
+    i.name AS ItemName, 
+    i.description, 
+    i.price, 
+    i.hasDiscount, 
+    i.discountAmount
+FROM 
+    Item i
+WHERE 
+    (i.name LIKE '%foundation%' OR i.description LIKE '%liquid foundation%') 
+    AND i.isActive = 1;  -- Fetching only active items
+
+******************************************************
+3. Customer Purchase History:
+SELECT 
+    o.id AS OrderID,
+    oi.itemId, 
+    i.name AS ItemName, 
+    oi.quantity, 
+    oi.price, 
+    oi.quantity * oi.price AS TotalSpent
+FROM 
+    Orders o
+JOIN 
+    OrderItem oi ON o.id = oi.orderId
+JOIN 
+    Item i ON oi.itemId = i.id
+WHERE 
+    o.clientId = 5  
+ORDER BY 
+    o.orderDate DESC;  
+
+******************************************************
+4. Top-Selling Products:
+SELECT 
+    i.name AS ItemName, 
+    SUM(oi.quantity) AS TotalQuantitySold
+FROM 
+    OrderItem oi
+JOIN 
+    Item i ON oi.itemId = i.id
+JOIN 
+    Orders o ON oi.orderId = o.id
+WHERE 
+    o.orderDate BETWEEN '2022-1-1' AND '2025-3-5'  
+GROUP BY 
+    i.name
+ORDER BY 
+    TotalQuantitySold DESC; 
+
